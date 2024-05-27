@@ -52,6 +52,9 @@ class VM_Parser:
             elif word == "add" or word == "sub" or word == "eq" or word == "lt" or word == "gt" or word == "neg" or word == "and" or word == "or" or word == "not":
                 self.command_type = "C_ARITHMETIC"
                 return
+            elif word == "label" or word == "goto" or word == "if-goto":
+                self.command_type = "C_FLOW"
+                return
                 
     def get_args(self):
         if self.command_type == "C_RETURN":
@@ -59,6 +62,11 @@ class VM_Parser:
         elif self.command_type == "C_ARITHMETIC":
             self.arg1 = self.current_command
             self.arg2 = None
+            return
+        elif self.command_type == "C_FLOW":
+            command_arr = self.current_command.split(" ")
+            self.arg1 = command_arr[0]
+            self.arg2 = command_arr[1]
             return
         
         command_arr = self.current_command.split(" ")

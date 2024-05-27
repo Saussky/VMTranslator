@@ -15,3 +15,7 @@ class Driver:
                 self.writer.write_push_pop(self.parser.current_command, self.parser.command_type, self.parser.arg1, self.parser.arg2)
             elif self.parser.command_type == "C_ARITHMETIC":
                 self.writer.write_arithmetic(self.parser.current_command)
+
+            elif self.parser.command_type == "C_FLOW":
+                self.writer.write_flow(
+                    self.parser.current_command, self.parser.arg1, self.parser.arg2)

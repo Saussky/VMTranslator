@@ -1,13 +1,16 @@
+import os
+
 class Code_Writer:
     def __init__(self, file_output):
         self.clear_file(file_output)
         self.file_output = file_output
         self.iter = 0
+        self.file_name = os.path.splitext(os.path.basename(file_output))[0]
 
     def clear_file(self, file_output):
         with open(file_output, mode="w") as file:
             file.write("")
-            
+
     def write_push_pop(self, command, type, segment, index):
         if type == "C_PUSH":
             if segment == "local" or segment == "argument" or segment == "this" or segment == "that":
@@ -34,7 +37,6 @@ class Code_Writer:
         self.write_line(command)
         return
 
-
     def write_arithmetic(self, command):
         if command == "add":
             command = self.write_add_or_sub('+')
@@ -52,6 +54,43 @@ class Code_Writer:
 
         self.write_line(command)
         return
+    
+    def write_flow(self, command, type, name):
+        if type == "label":
+            command = self.write_label(command, name)
+        elif type == "goto":
+            command = self.write_goto(command, name)
+        elif type == "if-goto":
+            command = self.write_if_goto(command, name)
+
+        self.write_line(command)
+        return
+    
+    def write_label(self, command, name):
+        asm_command = f"""
+        //{command}
+        ({name})
+        """
+        return asm_command
+    
+    def write_goto(self, command, name):
+        asm_command = f"""
+        //{command}
+        @{name}
+        """
+        return asm_command
+    
+    def write_if_goto(self, command, name):
+        asm_command = f"""
+        //{command}
+        @SP
+        M=M-1
+        A=M
+        D=M
+        @{name}
+        D;JNE
+        """
+        return asm_command
 
     def write_not(self):
         asm_command = f"""
@@ -152,9 +191,9 @@ class Code_Writer:
         @SP
         M=M+1
         """
-        
+
     def write_static_push(self, command, index):
-        address = "StaticTest"
+        address = self.file_name
         asm_command = f"""
         // {command}
         @{address}.{index}
@@ -165,9 +204,9 @@ class Code_Writer:
         M=D
         """
         return asm_command
-    
+
     def write_static_pop(self, command, index):
-        address = "StaticTest"
+        address = self.file_name
         asm_command = f"""
         // {command}
         @SP
@@ -178,8 +217,7 @@ class Code_Writer:
         M=D
         """
         return asm_command
-        
-        
+
     def write_pointer_push(self, command, index):
         asm_command = f"""
         // {command}
@@ -191,7 +229,7 @@ class Code_Writer:
         M=D    
         """
         return asm_command
-    
+
     def write_pointer_pop(self, command, index):
         asm_command = f"""
         // {command}

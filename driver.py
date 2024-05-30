@@ -1,6 +1,3 @@
-from assembly_output import Code_Writer
-from vm_parser import VM_Parser
-
 class Driver:
     def __init__(self, file_input, file_output, parser, writer,):
         self.file_input = file_input
@@ -17,5 +14,4 @@ class Driver:
                 self.writer.write_arithmetic(self.parser.current_command)
 
             elif self.parser.command_type == "C_FLOW":
-                self.writer.write_flow(
-                    self.parser.current_command, self.parser.arg1, self.parser.arg2)
+                self.writer.write_flow(self.parser.current_command, self.parser.arg1, self.parser.arg2)

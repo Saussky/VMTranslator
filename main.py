@@ -1,4 +1,4 @@
-from assembly_output import Code_Writer
+from assembly_output.main import Code_Writer
 from vm_parser import VM_Parser
 from driver import Driver
 

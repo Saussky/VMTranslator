@@ -2,6 +2,9 @@ class PushPopWriter:
     def __init__(self, file_output, file_name):
         self.file_output = file_output
         self.file_name = file_name
+        
+    def set_filename(self, file_name):
+        self.file_name = file_name
 
     def write_push_pop(self, command, type, segment, index):
         asm_command = ""

@@ -1,6 +1,9 @@
+import os
+
 class VM_Parser:
     def __init__(self, file):
         self.file = file
+        
         self.current_command = None
         self.command_type = None
         self.has_more_commands = None
@@ -10,6 +13,8 @@ class VM_Parser:
         
         self.lines = self.read_file(self.file)
         self.check_for_command()
+        
+
 
     def read_file(self, file):
         with open(file, encoding="utf-8") as file:
@@ -52,7 +57,7 @@ class VM_Parser:
             elif word == "add" or word == "sub" or word == "eq" or word == "lt" or word == "gt" or word == "neg" or word == "and" or word == "or" or word == "not":
                 self.command_type = "C_ARITHMETIC"
                 return
-            elif word == "label" or word == "goto" or word == "if-goto":
+            elif word == "label" or word == "goto" or word == "if-goto" or word == "function" or word == "call" or word == "return":
                 self.command_type = "C_FLOW"
                 return
                 

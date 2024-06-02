@@ -13,6 +13,10 @@ class Code_Writer:
         self.arithmetic_writer = ArithmeticWriter(file_output)
         self.flow_writer = FlowWriter(file_output)
         self.push_pop_writer = PushPopWriter(file_output, self.file_name)
+        
+    def set_filename(self, file_name):
+        self.file_name = file_name
+        self.push_pop_writer.set_filename(file_name)
 
     def clear_file(self, file_output):
         with open(file_output, mode="w") as file:

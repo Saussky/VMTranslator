@@ -12,6 +12,8 @@ class FlowWriter:
             asm_command = self.write_if_goto(command, name)
         elif "function" in type:
             asm_command = self.write_function(command, name, nvars)
+        elif "return" in command:
+            asm_command = self.write_return(command)
         self.write_line(asm_command)
 
     def write_label(self, command, name):
@@ -55,6 +57,66 @@ class FlowWriter:
             """
         
         return asm_command
+    
+    def write_return(self, command):
+        print('return called')
+        return f"""
+        // {command}
+        @LCL
+        D=M
+        @13
+        M=D
+        @5
+        A=D-A
+        D=M
+        @14
+        M=D
+        
+        @SP
+        A=M-1
+        D=M
+        @ARG
+        A=M
+        M=D
+        
+        @ARG
+        D=M
+        @SP
+        M=D+1
+        
+        @13
+        M=M-1
+        A=M
+        D=M
+        @THAT
+        M=D
+        
+        @13
+        M=M-1
+        A=M
+        D=M
+        @THIS
+        M=D
+        
+        @13
+        M=M-1
+        A=M
+        D=M
+        @ARG
+        M=D
+        
+        @13
+        M=M-1
+        A=M
+        D=M
+        @LCL
+        M=D
+        
+        @14
+        A=M
+        0;JMP
+        """
+        
         
     
 

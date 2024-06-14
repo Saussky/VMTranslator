@@ -37,5 +37,9 @@ class Driver:
                     self.writer.write_flow(self.parser.current_command, self.parser.arg1, self.parser.arg2)
                     
                 elif self.parser.command_type == "C_FUNCTION":
-                    print('aa', self.parser.arg1, self.parser.arg2, self.parser.arg3)
                     self.writer.write_flow(self.parser.current_command, self.parser.arg1, self.parser.arg2, self.parser.arg3)
+                
+                elif self.parser.command_type == "C_RETURN":
+                    self.writer.write_flow(self.parser.current_command, self.parser.arg1, self.parser.arg2)
+
+                    

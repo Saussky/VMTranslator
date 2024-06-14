@@ -9,12 +9,11 @@ class VM_Parser:
         self.has_more_commands = None
         
         self.arg1 = None
-        self.arg2= None
+        self.arg2 = None
+        self.arg3 = None
         
         self.lines = self.read_file(self.file)
         self.check_for_command()
-        
-
 
     def read_file(self, file):
         with open(file, encoding="utf-8") as file:
@@ -57,9 +56,14 @@ class VM_Parser:
             elif word == "add" or word == "sub" or word == "eq" or word == "lt" or word == "gt" or word == "neg" or word == "and" or word == "or" or word == "not":
                 self.command_type = "C_ARITHMETIC"
                 return
-            elif word == "label" or word == "goto" or word == "if-goto" or word == "function" or word == "call" or word == "return":
+            elif word == "label" or word == "goto" or word == "if-goto":
                 self.command_type = "C_FLOW"
                 return
+            elif word == "function" or word == "call":
+                self.command_type = "C_FUNCTION"
+                return
+            elif word == "return":
+                self.command_type = "C_RETURN"
                 
     def get_args(self):
         if self.command_type == "C_RETURN":
@@ -72,6 +76,12 @@ class VM_Parser:
             command_arr = self.current_command.split(" ")
             self.arg1 = command_arr[0]
             self.arg2 = command_arr[1]
+            return
+        elif self.command_type == "C_FUNCTION":
+            command_arr = self.current_command.split(" ")
+            self.arg1 = command_arr[0]
+            self.arg2 = command_arr[1]
+            self.arg3 = command_arr[2]
             return
         
         command_arr = self.current_command.split(" ")

@@ -18,10 +18,10 @@ class Driver:
             return [input_path]
         
     def run(self):
-        vm_files = self.check_dir_or_file(self.input_path)
+        vm_files = self.check_dir_or_file(self.file_input)
         
         for vm_file in vm_files:
-            self.parser = self.parser_class(vm_file)
+            # self.parser = self.parser_class(vm_file)
             self.writer.set_filename(vm_file)
             
             while self.parser.has_more_commands:
@@ -35,3 +35,7 @@ class Driver:
 
                 elif self.parser.command_type == "C_FLOW":
                     self.writer.write_flow(self.parser.current_command, self.parser.arg1, self.parser.arg2)
+                    
+                elif self.parser.command_type == "C_FUNCTION":
+                    print('aa', self.parser.arg1, self.parser.arg2, self.parser.arg3)
+                    self.writer.write_flow(self.parser.current_command, self.parser.arg1, self.parser.arg2, self.parser.arg3)

@@ -13,7 +13,7 @@ class PushPopWriter:
         asm_command = ""
         if type == "C_PUSH":
             if segment in ["local", "argument", "this", "that"]:
-                asm_command = self.write_static_push(command, segment, index)
+                asm_command = self.write_normal_push(command, segment, index)
             elif "constant" in segment:
                 asm_command = self.write_const_push(command, index)
             elif "temp" in segment:
@@ -21,19 +21,19 @@ class PushPopWriter:
             elif "pointer" in segment:
                 asm_command = self.write_pointer_push(command, index)
             elif "static" in segment:
-                asm_command = self.write_static_push(command, segment, index)
+                asm_command = self.write_static_push(command, index)
         elif type == "C_POP":
             if segment in ["local", "argument", "this", "that"]:
-                asm_command = self.write_static_pop(command, segment, index)
+                asm_command = self.write_normal_pop(command, segment, index)
             elif "temp" in segment:
                 asm_command = self.write_temp_pop(command, index)
             elif "pointer" in segment:
                 asm_command = self.write_pointer_pop(command, index)
             elif "static" in segment:
-                asm_command = self.write_static_pop(command, segment, index)
+                asm_command = self.write_static_pop(command, index)
         self.write_line(asm_command)
 
-    def write_static_push(self, command, segment, index):
+    def write_normal_push(self, command, segment, index):
         segment_symbol = self.segment_to_symbol(segment)
         return f"""
         // {command}
@@ -81,7 +81,18 @@ class PushPopWriter:
         M=D
         """
 
-    def write_static_pop(self, command, segment, index):
+    def write_static_push(self, command, index):
+        return f"""
+        // {command}
+        @{self.file_name}.{index}
+        D=M
+        @SP
+        M=M+1
+        A=M-1
+        M=D
+        """
+
+    def write_normal_pop(self, command, segment, index):
         segment_symbol = self.segment_to_symbol(segment)
         unique_temp_var = f"{self.current_function}$temp"
         return f"""
@@ -119,6 +130,17 @@ class PushPopWriter:
         A=M
         D=M
         @{3 + int(index)}
+        M=D
+        """
+
+    def write_static_pop(self, command, index):
+        return f"""
+        // {command}
+        @SP
+        M=M-1
+        A=M
+        D=M
+        @{self.file_name}.{index}
         M=D
         """
 

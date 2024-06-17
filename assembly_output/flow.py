@@ -8,10 +8,10 @@ class FlowWriter:
         asm_command = ""
         if "label" in type:
             asm_command = self.write_label(command, name)
-        elif "goto" in type:
-            asm_command = self.write_goto(command, name)
         elif "if-goto" in type:
             asm_command = self.write_if_goto(command, name)
+        elif "goto" in type:
+            asm_command = self.write_goto(command, name)
         elif "function" in type:
             asm_command = self.write_function(command, name, nvars)
         elif "call" in type:
@@ -36,6 +36,7 @@ class FlowWriter:
         """
 
     def write_if_goto(self, command, name):
+        print('if gotototo')
         scoped_label = f"{self.current_function}${name}"
         return f"""
         // {command}

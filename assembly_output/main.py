@@ -21,7 +21,7 @@ class Code_Writer:
     def clear_file(self, file_output):
         with open(file_output, mode="w") as file:
             file.write("")
-    
+            
     def write_init(self, file_output):
         asm_command = """
         // Initialize the stack pointer to 256
@@ -92,7 +92,7 @@ class Code_Writer:
         """
         with open(file_output, mode="a") as file:
             file.write(asm_command)
-
+        
     def write_push_pop(self, command, type, segment, index):
         self.push_pop_writer.write_push_pop(command, type, segment, index)
 

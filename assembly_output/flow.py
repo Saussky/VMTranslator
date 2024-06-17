@@ -2,6 +2,7 @@ class FlowWriter:
     def __init__(self, file_output):
         self.file_output = file_output
         self.call_counter = 1
+        self.current_function = ""
 
     def write_flow(self, command, type, name, nvars=None):
         asm_command = ""
@@ -20,30 +21,33 @@ class FlowWriter:
         self.write_line(asm_command)
 
     def write_label(self, command, name):
+        scoped_label = f"{self.current_function}${name}"
         return f"""
         // {command}
-        ({name})
+        ({scoped_label})
         """
 
     def write_goto(self, command, name):
+        scoped_label = f"{self.current_function}${name}"
         return f"""
         // {command}
-        @{name}
+        @{scoped_label}
         0;JMP
         """
 
     def write_if_goto(self, command, name):
+        scoped_label = f"{self.current_function}${name}"
         return f"""
         // {command}
         @SP
-        M=M-1
-        A=M
+        AM=M-1
         D=M
-        @{name}
+        @{scoped_label}
         D;JNE
         """
         
     def write_function(self, command, function_name, n_vars):
+        self.current_function = function_name
         asm_command = f"""
         // {command}
         ({function_name})
@@ -62,7 +66,7 @@ class FlowWriter:
         return asm_command
     
     def write_call(self, command, function_name, n_vars):
-        return_address = f"RETURN_{self.call_counter}"
+        return_address = f"{self.current_function}$ret.{self.call_counter}"
         self.call_counter += 1
         asm_command = f"""
         // {command}
@@ -74,6 +78,7 @@ class FlowWriter:
         @SP
         M=M+1
         
+        // Save LCL
         @LCL
         D=M
         @SP
@@ -82,6 +87,7 @@ class FlowWriter:
         @SP
         M=M+1
         
+        // Save ARG
         @ARG
         D=M
         @SP
@@ -90,6 +96,7 @@ class FlowWriter:
         @SP
         M=M+1
         
+        // Save THIS
         @THIS
         D=M
         @SP
@@ -98,6 +105,7 @@ class FlowWriter:
         @SP
         M=M+1
         
+        // Save THAT
         @THAT
         D=M
         @SP
@@ -106,6 +114,7 @@ class FlowWriter:
         @SP
         M=M+1
         
+        // Reposition ARG
         @SP
         D=M
         @5
@@ -115,33 +124,38 @@ class FlowWriter:
         @ARG
         M=D
         
+        // Reposition LCL
         @SP
         D=M
         @LCL
         M=D
         
+        // Goto function
         @{function_name}
         0;JMP
         
+        // (return-address)
         ({return_address})
         """
         return asm_command
 
     def write_return(self, command):
+        frame_temp = f"{self.current_function}$frame"
+        ret_temp = f"{self.current_function}$ret"
         asm_command = f"""
         // {command}
         @LCL
         D=M
-        @R13
+        @{frame_temp}
         M=D                  // FRAME = LCL
         @5
         A=D-A
         D=M
-        @R14
+        @{ret_temp}
         M=D                  // RET = *(FRAME-5)
         
         @SP
-        A=M-1
+        AM=M-1
         D=M
         @ARG
         A=M
@@ -152,31 +166,40 @@ class FlowWriter:
         @SP
         M=D                  // SP = ARG+1
         
-        @R13
-        AM=M-1
+        @{frame_temp}
+        A=M-1
         D=M
         @THAT
         M=D                  // THAT = *(FRAME-1)
         
-        @R13
-        AM=M-1
+        @{frame_temp}
+        D=M
+        @2
+        D=D-A
+        A=D
         D=M
         @THIS
         M=D                  // THIS = *(FRAME-2)
         
-        @R13
-        AM=M-1
+        @{frame_temp}
+        D=M
+        @3
+        D=D-A
+        A=D
         D=M
         @ARG
         M=D                  // ARG = *(FRAME-3)
         
-        @R13
-        AM=M-1
+        @{frame_temp}
+        D=M
+        @4
+        D=D-A
+        A=D
         D=M
         @LCL
         M=D                  // LCL = *(FRAME-4)
         
-        @R14
+        @{ret_temp}
         A=M
         0;JMP                // goto RET
         """
@@ -187,4 +210,3 @@ class FlowWriter:
             return
         with open(self.file_output, mode="a") as file:
             file.write(code)
-

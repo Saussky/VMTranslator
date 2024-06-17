@@ -1,15 +1,15 @@
 import os
 
 class Driver:
-    def __init__(self, file_input, file_output, parser, writer,):
+    def __init__(self, file_input, file_output, parser, writer):
         self.file_input = file_input
         self.file_output = file_output
         self.parser_class = parser
-        self.writer = writer(self.file_output)
+        is_directory = os.path.isdir(file_input)
+        self.writer = writer(self.file_output, initialize=is_directory)
 
     def check_dir_or_file(self, input_path):
         if os.path.isdir(input_path):
-            print('ahah')
             return [
                 os.path.join(input_path, file)
                 for file in os.listdir(input_path)
@@ -42,5 +42,3 @@ class Driver:
                 
                 elif self.parser.command_type == "C_RETURN":
                     self.writer.write_flow(self.parser.current_command, self.parser.arg1, self.parser.arg2)
-
-                    

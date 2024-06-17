@@ -81,7 +81,7 @@ class ArithmeticWriter:
         M=-1
         (END_{self.iter})
         """
-        
+      
     def write_line(self, code):
         if not code:
             return

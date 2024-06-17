@@ -1,15 +1,14 @@
 import os
-
 from assembly_output.arithmetic import ArithmeticWriter
 from assembly_output.flow import FlowWriter
 from assembly_output.push_pop import PushPopWriter
 
-
 class Code_Writer:
-    def __init__(self, file_output):
+    def __init__(self, file_output, initialize=False):
         self.file_output = file_output
         self.clear_file(self.file_output)
-        self.write_init(self.file_output)
+        if initialize:
+            self.write_init(self.file_output)
         self.file_name = os.path.splitext(os.path.basename(self.file_output))[0]
         self.arithmetic_writer = ArithmeticWriter(self.file_output)
         self.flow_writer = FlowWriter(self.file_output)

@@ -1,5 +1,3 @@
-import os
-
 class VM_Parser:
     def __init__(self, file):
         self.file = file

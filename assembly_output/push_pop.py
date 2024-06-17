@@ -1,11 +1,13 @@
+import os
+
 class PushPopWriter:
     def __init__(self, file_output, file_name):
         self.file_output = file_output
-        self.file_name = file_name
-        
+        self.file_name = os.path.splitext(os.path.basename(file_name))[0]  # Extract just the file name without path
+                
     def set_filename(self, file_name):
-        self.file_name = file_name
-
+        self.file_name = os.path.splitext(os.path.basename(file_name))[0]  # Extract just the file name without path
+        
     def write_push_pop(self, command, type, segment, index):
         asm_command = ""
         if type == "C_PUSH":

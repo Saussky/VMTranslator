@@ -25,15 +25,10 @@ class ArithmeticWriter:
         return f"""
         // {comment}
         @SP
-        M=M-1
-        A=M
+        AM=M-1
         D=M
-        @SP
-        M=M-1
-        A=M
+        A=A-1
         M=M{symbol}D
-        @SP
-        M=M+1
         """
 
     def write_not(self):
@@ -49,15 +44,10 @@ class ArithmeticWriter:
         return f"""
         // {command}
         @SP
-        M=M-1
-        A=M
+        AM=M-1
         D=M
-        @SP
-        M=M-1
-        A=M
-        M=D{symbol}M
-        @SP
-        M=M+1
+        A=A-1
+        M=M{symbol}D
         """
 
     def write_neg(self):
@@ -74,29 +64,24 @@ class ArithmeticWriter:
         return f"""
         // {command.upper()}
         @SP
-        M=M-1
-        A=M
+        AM=M-1
         D=M
-        @SP
-        M=M-1
-        A=M
+        A=A-1
         D=M-D
         @{command.upper()}_TRUE_{self.iter}
         D;{jump}
         @SP
-        A=M
+        A=M-1
         M=0
         @END_{self.iter}
         0;JMP
         ({command.upper()}_TRUE_{self.iter})
         @SP
-        A=M
+        A=M-1
         M=-1
         (END_{self.iter})
-        @SP
-        M=M+1
         """
-
+        
     def write_line(self, code):
         if not code:
             return
